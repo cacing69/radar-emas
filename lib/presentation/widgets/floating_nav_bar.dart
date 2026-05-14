@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:radar_emas/presentation/theme/app_colors.dart';
 
 class FloatingNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -30,9 +31,9 @@ class FloatingNavBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
               ),
             ],
           ),
@@ -52,7 +53,9 @@ class FloatingNavBar extends StatelessWidget {
                       curve: Curves.easeInOutBack,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: selected ? Colors.blue : Colors.transparent,
+                        color: selected
+                            ? AppColors.primary
+                            : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
                       child: AnimatedSwitcher(
@@ -60,6 +63,7 @@ class FloatingNavBar extends StatelessWidget {
                         child: Icon(
                           _icons[index],
                           key: ValueKey(selected),
+                          size: 20,
                           color: selected ? Colors.white : Colors.grey,
                         ),
                       ),
