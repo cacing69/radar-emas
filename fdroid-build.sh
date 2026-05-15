@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Load environment variables
+source "$(dirname "$0")/.env"
+
 # Usage: ./fdroid-build.sh [patch|minor|major]
 #   patch - bump patch (default): 1.3.4 → 1.3.5  build 10305
 #   minor - bump minor, reset patch: 1.3.4 → 1.4.0  build 10400
@@ -104,6 +107,7 @@ echo "Copied 3 APKs to $FDROID_REPO"
  git add .
  git commit -m "update radar_emas to $NEW_VERSION"
  git push origin main)
+
 
 # Clear NOTES.txt after successful build
 # if [ -n "$CHANGELOG" ]; then

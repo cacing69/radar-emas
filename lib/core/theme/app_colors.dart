@@ -9,10 +9,6 @@ class AppColors {
 
 class AppShadows {
   static const subtle = [
-    BoxShadow(
-      color: Color(0x0D000000),
-      blurRadius: 3,
-      offset: Offset(0, 1),
-    ),
+    BoxShadow(color: Color(0x0D000000), blurRadius: 3, offset: Offset(0, 1)),
   ];
 }

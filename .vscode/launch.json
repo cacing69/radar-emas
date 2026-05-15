@@ -18,6 +18,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "radar_emas (web mode)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome"
         }
     ]
 }

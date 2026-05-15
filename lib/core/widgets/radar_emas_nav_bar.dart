@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:radar_emas/presentation/theme/app_colors.dart';
+import 'package:radar_emas/core/theme/app_colors.dart';
 
-class FloatingNavBar extends StatelessWidget {
+class RadarEmasNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onChanged;
 
@@ -13,7 +13,7 @@ class FloatingNavBar extends StatelessWidget {
     LucideIcons.house,
   ];
 
-  const FloatingNavBar({
+  const RadarEmasNavBar({
     super.key,
     required this.selectedIndex,
     required this.onChanged,
@@ -21,29 +21,25 @@ class FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 16,
-      left: 0,
-      right: 0,
-      child: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: AppShadows.subtle,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+    return SafeArea(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: AppShadows.subtle,
+            ),
+            padding: const EdgeInsets.all(8),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(_icons.length, (index) {
                 final selected = selectedIndex == index;
                 return GestureDetector(
                   onTap: () => onChanged(index),
-                  child: _NavItem(
-                    icon: _icons[index],
-                    selected: selected,
-                  ),
+                  child: _NavItem(icon: _icons[index], selected: selected),
                 );
               }),
             ),
