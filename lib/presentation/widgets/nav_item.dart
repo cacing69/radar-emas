@@ -23,7 +23,7 @@ class NavItem extends StatelessWidget {
           child: Icon(
             icon,
             key: ValueKey(selected),
-            size: 6,
+            size: 24,
             color: selected ? Colors.white : Colors.grey,
           ),
         ),

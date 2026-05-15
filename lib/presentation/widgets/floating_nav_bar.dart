@@ -7,6 +7,7 @@ class FloatingNavBar extends StatelessWidget {
   final ValueChanged<int> onChanged;
 
   static const _icons = [
+    LucideIcons.star,
     LucideIcons.newspaper,
     LucideIcons.chartNoAxesCombined,
     LucideIcons.house,
@@ -29,52 +30,95 @@ class FloatingNavBar extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: AppShadows.subtle,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOutBack,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(_icons.length, (index) {
-                  final selected = selectedIndex == index;
-                  return GestureDetector(
-                    onTap: () => onChanged(index),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOutBack,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? AppColors.primary
-                            : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          _icons[index],
-                          key: ValueKey(selected),
-                          size: 20,
-                          color: selected ? Colors.white : Colors.grey,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(_icons.length, (index) {
+                final selected = selectedIndex == index;
+                return GestureDetector(
+                  onTap: () => onChanged(index),
+                  child: _NavItem(
+                    icon: _icons[index],
+                    selected: selected,
+                  ),
+                );
+              }),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final bool selected;
+
+  const _NavItem({required this.icon, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _CircleIndicatorPainter(
+        color: AppColors.primary,
+        show: selected,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: Icon(
+            icon,
+            key: ValueKey(selected),
+            size: 20,
+            color: selected ? Colors.white : Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CircleIndicatorPainter extends CustomPainter {
+  final Color color;
+  final bool show;
+
+  _CircleIndicatorPainter({required this.color, required this.show});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (!show) return;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.shortestSide / 2);
+
+    // Soft glow
+    final glowPaint = Paint()
+      ..color = color.withValues(alpha: 0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    canvas.drawCircle(center, radius, glowPaint);
+
+    // Main circle with radial gradient
+    final rect = Rect.fromCircle(center: center, radius: radius);
+    final gradient = RadialGradient(
+      colors: [
+        Color.lerp(color, Colors.white, 0.15)!,
+        color,
+      ],
+      stops: const [0.0, 1.0],
+    );
+    final circlePaint = Paint()
+      ..shader = gradient.createShader(rect)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, circlePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CircleIndicatorPainter oldDelegate) {
+    return oldDelegate.show != show || oldDelegate.color != color;
   }
 }

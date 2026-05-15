@@ -1,0 +1,210 @@
+import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:radar_emas/presentation/screens/profil_page.dart';
+import 'package:radar_emas/presentation/screens/setting_page.dart';
+import 'package:radar_emas/presentation/theme/app_colors.dart';
+
+class FloatingAppBar extends StatelessWidget {
+  final Widget child;
+  final GlobalKey _avatarKey = GlobalKey();
+
+  FloatingAppBar({super.key, this.child = const SizedBox()});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 2.5,
+      left: 0,
+      right: 0,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 70, maxHeight: 70),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: AppShadows.subtle,
+                  ),
+                  child: SizedBox.expand(
+                    child: Align(alignment: Alignment.centerLeft, child: child),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: () {
+                  final avatarContext = _avatarKey.currentContext;
+                  if (avatarContext == null) return;
+                  final renderBox =
+                      avatarContext.findRenderObject() as RenderBox;
+                  final position = renderBox.localToGlobal(Offset.zero);
+                  showMenu(
+                    context: context,
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    position: RelativeRect.fromLTRB(
+                      position.dx,
+                      position.dy + renderBox.size.height + 8,
+                      position.dx + renderBox.size.width,
+                      0,
+                    ),
+                    items: <PopupMenuEntry>[
+                      PopupMenuItem(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 0,
+                        ),
+                        height: 28,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ProfilPage(),
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(
+                              LucideIcons.user,
+                              size: 14,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 8),
+                            Text('Profil', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 0,
+                        ),
+                        height: 28,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SettingPage(),
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(
+                              LucideIcons.settings,
+                              size: 14,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 8),
+                            Text('Pengaturan', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 0,
+                        ),
+                        height: 28,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SettingPage(),
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(
+                              LucideIcons.info,
+                              size: 14,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 8),
+                            Text('About', style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 0,
+                        ),
+                        height: 28,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Keluar'),
+                              content: const Text(
+                                'Apakah kamu yakin ingin keluar?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Batal'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Keluar',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: const Row(
+                          children: [
+                            Icon(
+                              LucideIcons.logOut,
+                              size: 14,
+                              color: Colors.red,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Keluar',
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                child: Container(
+                  key: _avatarKey,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: AppShadows.subtle,
+                  ),
+                  child: const CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      LucideIcons.user,
+                      size: 24,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

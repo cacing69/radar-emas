@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:radar_emas/presentation/screens/home_tab_chart.dart';
+import 'package:radar_emas/presentation/screens/home_tab_main.dart';
 import 'package:radar_emas/presentation/widgets/floating_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,9 +14,10 @@ class _HomePageState extends State<HomePage> {
   final ValueNotifier<int> selectedMenu = ValueNotifier<int>(0);
 
   final List<Widget> _tabs = const [
+    Center(child: Text('Favorite')),
     Center(child: Text('News')),
-    Center(child: Text('Chart')),
-    Center(child: Text('Home')),
+    HomeTabChart(),
+    HomeTabMain(),
   ];
 
   @override
