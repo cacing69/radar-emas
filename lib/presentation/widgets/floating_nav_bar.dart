@@ -94,27 +94,13 @@ class _CircleIndicatorPainter extends CustomPainter {
     if (!show) return;
 
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.shortestSide / 2);
+    final radius = size.shortestSide / 2;
 
-    // Soft glow
-    final glowPaint = Paint()
-      ..color = color.withValues(alpha: 0.15)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-    canvas.drawCircle(center, radius, glowPaint);
-
-    // Main circle with radial gradient
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    final gradient = RadialGradient(
-      colors: [
-        Color.lerp(color, Colors.white, 0.15)!,
-        color,
-      ],
-      stops: const [0.0, 1.0],
-    );
-    final circlePaint = Paint()
-      ..shader = gradient.createShader(rect)
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, radius, circlePaint);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+    canvas.drawCircle(center, radius, paint);
   }
 
   @override
