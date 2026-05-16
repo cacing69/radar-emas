@@ -1,11 +1,11 @@
 import 'package:radar_emas/core/result/result.dart';
 import 'package:radar_emas/features/chart/data/mappers/source_mapper.dart';
-import 'package:radar_emas/features/chart/domain/datasources/source_remote_datasource.dart';
+import 'package:radar_emas/features/chart/domain/datasources/chart_remote_datasource.dart';
 import 'package:radar_emas/features/chart/domain/entities/source.dart';
 import 'package:radar_emas/features/chart/domain/repositories/source_repository.dart';
 
 class SourceRepositoryImpl implements SourceRepository {
-  final SourceRemoteDatasource _datasource;
+  final ChartRemoteDatasource _datasource;
   final SourceMapper _mapper;
 
   const SourceRepositoryImpl(this._datasource, this._mapper);

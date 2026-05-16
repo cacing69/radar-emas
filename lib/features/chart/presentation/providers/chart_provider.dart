@@ -17,6 +17,7 @@ class SelectedSource extends _$SelectedSource {
 
 @riverpod
 Future<List<Source>> sources(Ref ref) async {
+  ref.keepAlive();
   final repository = ref.watch(sourceRepositoryProvider);
   final result = await GetSources(repository).call();
   return result.fold(

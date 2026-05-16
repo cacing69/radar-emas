@@ -98,7 +98,7 @@ final class SourcesProvider
   }
 }
 
-String _$sourcesHash() => r'9ad0eadfb709dc06193e8179544e6d38c41202a2';
+String _$sourcesHash() => r'8eff0d79007fb63e25265c190645f6f1530ab9a7';
 
 @ProviderFor(chartPrices)
 final chartPricesProvider = ChartPricesFamily._();

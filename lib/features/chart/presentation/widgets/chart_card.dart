@@ -78,7 +78,7 @@ class _ChartCardState extends State<ChartCard> {
                 ),
                 Gap(10),
                 Text(
-                  'Logam Mulia',
+                  'Radar Emas',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
@@ -157,101 +157,104 @@ class _ChartCardState extends State<ChartCard> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 200, maxHeight: 200),
-              child: LineChart(
-                LineChartData(
-                  gridData: const FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  titlesData: const FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 1,
-                        reservedSize: 24,
-                        getTitlesWidget: _bottomTitles,
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipItems: (_) => [],
-                    ),
-                    touchCallback: (event, response) {
-                      final spots = response?.lineBarSpots;
-                      if (spots != null && spots.isNotEmpty) {
-                        final buyback = spots.firstWhere(
-                          (s) => s.barIndex == 0,
-                          orElse: () => spots.first,
-                        );
-                        final jual = spots.firstWhere(
-                          (s) => s.barIndex == 1,
-                          orElse: () => spots.first,
-                        );
-                        setState(() {
-                          _touchedBeli = buyback.y;
-                          _touchedJual = jual.y;
-                        });
-                      }
-                    },
-                  ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _beliSpots,
-                      isCurved: true,
-                      color: AppColors.accent,
-                      barWidth: 2.5,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(show: false),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.accent.withValues(alpha: 0.25),
-                            AppColors.accent.withValues(alpha: 0.15),
-                            AppColors.accent.withValues(alpha: 0.0),
-                          ],
+                constraints: const BoxConstraints(
+                  minHeight: 200,
+                  maxHeight: 200,
+                ),
+                child: LineChart(
+                  LineChartData(
+                    gridData: const FlGridData(show: false),
+                    borderData: FlBorderData(show: false),
+                    titlesData: const FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          interval: 1,
+                          reservedSize: 24,
+                          getTitlesWidget: _bottomTitles,
                         ),
                       ),
-                    ),
-                    LineChartBarData(
-                      spots: _jualSpots,
-                      isCurved: true,
-                      color: AppColors.primary,
-                      barWidth: 2.5,
-                      isStrokeCapRound: true,
-                      dotData: const FlDotData(show: false),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.primary.withValues(alpha: 0.15),
-                            AppColors.primary.withValues(alpha: 0.05),
-                            AppColors.primary.withValues(alpha: 0.0),
-                          ],
-                        ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
                       ),
                     ),
-                  ],
-                  minY: 22000000,
-                  maxY: 28000000,
+                    lineTouchData: LineTouchData(
+                      touchTooltipData: LineTouchTooltipData(
+                        getTooltipItems: (_) => [],
+                      ),
+                      touchCallback: (event, response) {
+                        final spots = response?.lineBarSpots;
+                        if (spots != null && spots.isNotEmpty) {
+                          final buyback = spots.firstWhere(
+                            (s) => s.barIndex == 0,
+                            orElse: () => spots.first,
+                          );
+                          final jual = spots.firstWhere(
+                            (s) => s.barIndex == 1,
+                            orElse: () => spots.first,
+                          );
+                          setState(() {
+                            _touchedBeli = buyback.y;
+                            _touchedJual = jual.y;
+                          });
+                        }
+                      },
+                    ),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: _beliSpots,
+                        isCurved: true,
+                        color: AppColors.accent,
+                        barWidth: 2.5,
+                        isStrokeCapRound: true,
+                        dotData: const FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.accent.withValues(alpha: 0.25),
+                              AppColors.accent.withValues(alpha: 0.15),
+                              AppColors.accent.withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                      LineChartBarData(
+                        spots: _jualSpots,
+                        isCurved: true,
+                        color: AppColors.primary,
+                        barWidth: 2.5,
+                        isStrokeCapRound: true,
+                        dotData: const FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.primary.withValues(alpha: 0.15),
+                              AppColors.primary.withValues(alpha: 0.05),
+                              AppColors.primary.withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    minY: 22000000,
+                    maxY: 28000000,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );

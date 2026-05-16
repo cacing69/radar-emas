@@ -181,54 +181,6 @@ final class ChartRemoteDatasourceProvider
 String _$chartRemoteDatasourceHash() =>
     r'c71a7f8896b34a8998b437509d002f8f6a19b8b1';
 
-@ProviderFor(sourceRemoteDatasource)
-final sourceRemoteDatasourceProvider = SourceRemoteDatasourceProvider._();
-
-final class SourceRemoteDatasourceProvider
-    extends
-        $FunctionalProvider<
-          SourceRemoteDatasource,
-          SourceRemoteDatasource,
-          SourceRemoteDatasource
-        >
-    with $Provider<SourceRemoteDatasource> {
-  SourceRemoteDatasourceProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'sourceRemoteDatasourceProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$sourceRemoteDatasourceHash();
-
-  @$internal
-  @override
-  $ProviderElement<SourceRemoteDatasource> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SourceRemoteDatasource create(Ref ref) {
-    return sourceRemoteDatasource(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SourceRemoteDatasource value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SourceRemoteDatasource>(value),
-    );
-  }
-}
-
-String _$sourceRemoteDatasourceHash() =>
-    r'118fb97657b603b5a78310e6d9f78bc054a836c5';
-
 @ProviderFor(chartRepository)
 final chartRepositoryProvider = ChartRepositoryProvider._();
 
@@ -315,4 +267,4 @@ final class SourceRepositoryProvider
   }
 }
 
-String _$sourceRepositoryHash() => r'02902c9253823218026b068dd7066a05da6a980c';
+String _$sourceRepositoryHash() => r'0d0ee6db07a4df4970ef68306daaa10c7186fffc';

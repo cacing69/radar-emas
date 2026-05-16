@@ -1,13 +1,11 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:radar_emas/core/network/logam_mulia_api.dart';
 import 'package:radar_emas/features/chart/data/datasources/chart_remote_datasource_impl.dart';
-import 'package:radar_emas/features/chart/data/datasources/source_remote_datasource_impl.dart';
 import 'package:radar_emas/features/chart/data/mappers/gold_price_mapper.dart';
 import 'package:radar_emas/features/chart/data/mappers/source_mapper.dart';
 import 'package:radar_emas/features/chart/data/repositories/chart_repository_impl.dart';
 import 'package:radar_emas/features/chart/data/repositories/source_repository_impl.dart';
 import 'package:radar_emas/features/chart/domain/datasources/chart_remote_datasource.dart';
-import 'package:radar_emas/features/chart/domain/datasources/source_remote_datasource.dart';
 import 'package:radar_emas/features/chart/domain/repositories/chart_repository.dart';
 import 'package:radar_emas/features/chart/domain/repositories/source_repository.dart';
 
@@ -27,10 +25,6 @@ ChartRemoteDatasource chartRemoteDatasource(Ref ref) =>
     ChartRemoteDatasourceImpl(ref.watch(logamMuliaApiProvider));
 
 @riverpod
-SourceRemoteDatasource sourceRemoteDatasource(Ref ref) =>
-    SourceRemoteDatasourceImpl(ref.watch(logamMuliaApiProvider));
-
-@riverpod
 ChartRepository chartRepository(Ref ref) => ChartRepositoryImpl(
       ref.watch(chartRemoteDatasourceProvider),
       ref.watch(goldPriceMapperProvider),
@@ -38,6 +32,6 @@ ChartRepository chartRepository(Ref ref) => ChartRepositoryImpl(
 
 @riverpod
 SourceRepository sourceRepository(Ref ref) => SourceRepositoryImpl(
-      ref.watch(sourceRemoteDatasourceProvider),
+      ref.watch(chartRemoteDatasourceProvider),
       ref.watch(sourceMapperProvider),
     );
