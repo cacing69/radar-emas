@@ -12,14 +12,15 @@ class ChartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pricesAsync = ref.watch(chartPricesProvider);
+    final source = ref.watch(selectedSourceProvider);
+    final pricesAsync = ref.watch(chartPricesProvider(source));
     final formatter = NumberFormat('#,###', 'id_ID');
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
-        child: SafeArea(child: RadarEmasAppBar(child: Text("Chart Page"))),
+        child: SafeArea(child: RadarEmasAppBar(child: Text("Provider"))),
       ),
       body: SafeArea(
         child: Padding(
@@ -52,8 +53,8 @@ class ChartScreen extends ConsumerWidget {
                           const Gap(12),
                           ElevatedButton(
                             onPressed: () =>
-                                ref.invalidate(chartPricesProvider),
-                            child: const Text('Coba Lagi'),
+                                ref.invalidate(chartPricesProvider(source)),
+                            child: const Text('Retry'),
                           ),
                         ],
                       ),
@@ -67,8 +68,10 @@ class ChartScreen extends ConsumerWidget {
                             for (final price in prices)
                               _PriceListTile(
                                 materialType: price.materialType,
-                                weight:
-                                    '${price.weight.toInt()} ${price.weightUnit}',
+                                weight: price.weight % 1 == 0
+                                    ? price.weight.toInt().toString()
+                                    : price.weight.toString(),
+                                unit: price.weightUnit,
                                 sellPrice:
                                     'IDR ${formatter.format(price.sellPrice.toInt())}',
                                 buybackPrice:
@@ -93,12 +96,14 @@ class ChartScreen extends ConsumerWidget {
 class _PriceListTile extends StatelessWidget {
   final String materialType;
   final String weight;
+  final String unit;
   final String sellPrice;
   final String buybackPrice;
 
   const _PriceListTile({
     required this.materialType,
     required this.weight,
+    required this.unit,
     required this.sellPrice,
     required this.buybackPrice,
   });
@@ -109,9 +114,41 @@ class _PriceListTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: AppColors.accent.withValues(alpha: 0.2),
-            child: const Icon(Icons.monetization_on, color: AppColors.accent),
+          ConstrainedBox(
+            constraints: BoxConstraints(minWidth: 55, maxWidth: 60),
+            child: AspectRatio(
+              aspectRatio: 2 / 1.5,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        weight,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        unit,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           const Gap(12),
           Expanded(
@@ -121,20 +158,17 @@ class _PriceListTile extends StatelessWidget {
                 Text(
                   materialType,
                   style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
                   ),
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                ),
-                const Gap(2),
-                Text(
-                  weight,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
               ],
             ),
           ),
+          Gap(2),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

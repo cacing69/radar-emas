@@ -75,7 +75,7 @@ class RadarEmasAppBar extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                           Gap(8),
-                          Text('Profil', style: TextStyle(fontSize: 12)),
+                          Text('Profile', style: TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -101,7 +101,7 @@ class RadarEmasAppBar extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                           Gap(8),
-                          Text('Pengaturan', style: TextStyle(fontSize: 12)),
+                          Text('Settings', style: TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
@@ -141,21 +141,21 @@ class RadarEmasAppBar extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Keluar'),
+                            title: const Text('Logout'),
                             content: const Text(
-                              'Apakah kamu yakin ingin keluar?',
+                              'Are you sure you want to logout?',
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Batal'),
+                                child: const Text('Cancel'),
                               ),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                                 child: const Text(
-                                  'Keluar',
+                                  'Logout',
                                   style: TextStyle(color: Colors.red),
                                 ),
                               ),
@@ -168,7 +168,7 @@ class RadarEmasAppBar extends StatelessWidget {
                           Icon(LucideIcons.logOut, size: 14, color: Colors.red),
                           Gap(8),
                           Text(
-                            'Keluar',
+                            'Logout',
                             style: TextStyle(fontSize: 12, color: Colors.red),
                           ),
                         ],

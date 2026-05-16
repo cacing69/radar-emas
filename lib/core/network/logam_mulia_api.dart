@@ -9,15 +9,15 @@ class LogamMuliaApi {
 
   LogamMuliaApi() : _client = ApiClient.create(_baseUrl);
 
-  Future<BaseResponse<dynamic>> getPrices() async {
+  Future<BaseResponse<dynamic>> get(String path) async {
     try {
-      final response = await _client.dio.get('/api/prices/anekalogam');
+      final response = await _client.dio.get(path);
       final json = response.data as Map<String, dynamic>;
       return BaseResponse<dynamic>.fromJson(json, (data) => data);
     } on DioException catch (e) {
       return BaseResponse(
         success: false,
-        message: e.message ?? 'Gagal mengambil data',
+        message: e.message ?? 'Failed to fetch data',
       );
     }
   }

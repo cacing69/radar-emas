@@ -78,7 +78,7 @@ class _ChartCardState extends State<ChartCard> {
                 ),
                 Gap(10),
                 Text(
-                  'Aneka Logam',
+                  'Logam Mulia',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
@@ -136,7 +136,7 @@ class _ChartCardState extends State<ChartCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Legend(color: AppColors.primary, label: 'Jual'),
+                          _Legend(color: AppColors.primary, label: 'Sell'),
                           const Gap(4),
                           Text(
                             'IDR ${NumberFormat('#,###', 'id_ID').format(_touchedJual!)}',
@@ -284,7 +284,7 @@ class _Legend extends StatelessWidget {
 }
 
 Widget _bottomTitles(double value, TitleMeta meta) {
-  const labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+  const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   final index = value.toInt();
   if (index < 0 || index >= labels.length) return const SizedBox();
   return Padding(

@@ -2,6 +2,7 @@ import 'package:radar_emas/features/chart/data/dto/gold_price_dto.dart';
 import 'package:radar_emas/features/chart/domain/entities/gold_price.dart';
 
 class GoldPriceMapper {
+  const GoldPriceMapper();
   GoldPrice toEntity(GoldPriceDto dto) {
     return GoldPrice(
       source: dto.source,
