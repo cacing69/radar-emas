@@ -124,9 +124,11 @@ class ChartScreen extends ConsumerWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: isPortrait ? Radius.zero : Radius.circular(16),
-                    topRight: isPortrait ? Radius.circular(16) : Radius.zero,
-                    bottomRight: isPortrait ? Radius.zero : Radius.zero,
-                    bottomLeft: isPortrait ? Radius.zero : Radius.circular(16),
+                    topRight: isPortrait ? Radius.zero : Radius.zero,
+                    bottomRight: isPortrait ? Radius.circular(16) : Radius.zero,
+                    bottomLeft: isPortrait
+                        ? Radius.circular(16)
+                        : Radius.circular(16),
                   ),
                   boxShadow: AppShadows.subtle,
                 ),

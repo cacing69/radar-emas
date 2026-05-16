@@ -84,7 +84,7 @@ class _ChartCardState extends State<ChartCard> {
                 Gap(10),
                 Text(
                   'Radar Emas',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
                 Text(
