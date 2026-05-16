@@ -127,7 +127,7 @@ class ChartScreen extends ConsumerWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: isPortrait ? Radius.zero : Radius.circular(16),
-                    topRight: isPortrait ? Radius.zero : Radius.zero,
+                    topRight: isPortrait ? Radius.zero : Radius.circular(16),
                     bottomRight: isPortrait ? Radius.circular(16) : Radius.zero,
                     bottomLeft: isPortrait
                         ? Radius.circular(16)
@@ -150,7 +150,34 @@ class ChartScreen extends ConsumerWidget {
               return Row(
                 children: [
                   Expanded(
-                    child: Column(children: [RadarEmasAppBar(), priceList]),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _showSourceSheet(context, ref),
+                          child: RadarEmasAppBar(
+                            child: Skeletonizer(
+                              enabled: sourcesAsync.isLoading,
+                              child: Row(
+                                children: [
+                                  Gap(5),
+                                  Icon(
+                                    LucideIcons.arrowLeftRight,
+                                    size: 20,
+                                    color: AppColors.primary,
+                                  ),
+                                  Gap(10),
+                                  Text(
+                                    selectedSource?.displayName ??
+                                        'Select Provider',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: priceList),
+                      ],
+                    ),
                   ),
                   const Gap(6),
                   Expanded(child: ChartCard(isPortrait: isPortrait)),

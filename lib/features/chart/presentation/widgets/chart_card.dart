@@ -47,7 +47,9 @@ class _ChartCardState extends State<ChartCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: widget.isPortrait ? Radius.circular(16) : Radius.zero,
+          topLeft: widget.isPortrait
+              ? Radius.circular(16)
+              : Radius.circular(16),
           topRight: widget.isPortrait
               ? Radius.circular(16)
               : Radius.circular(16),
