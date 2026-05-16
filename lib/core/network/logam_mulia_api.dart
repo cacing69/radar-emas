@@ -1,24 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:retrofit/retrofit.dart';
 import 'package:radar_emas/core/network/api_client.dart';
-import 'package:radar_emas/core/network/base_response.dart';
 
-class LogamMuliaApi {
-  static const _baseUrl = 'https://logam-mulia-api.iamutaki.workers.dev';
+part 'logam_mulia_api.g.dart';
 
-  final ApiClient _client;
+@RestApi(baseUrl: 'https://logam-mulia-api.iamutaki.workers.dev')
+abstract class LogamMuliaApi {
+  factory LogamMuliaApi() => _LogamMuliaApi(ApiClient.create(
+        'https://logam-mulia-api.iamutaki.workers.dev',
+      ).dio);
 
-  LogamMuliaApi() : _client = ApiClient.create(_baseUrl);
-
-  Future<BaseResponse<dynamic>> get(String path) async {
-    try {
-      final response = await _client.dio.get(path);
-      final json = response.data as Map<String, dynamic>;
-      return BaseResponse<dynamic>.fromJson(json, (data) => data);
-    } on DioException catch (e) {
-      return BaseResponse(
-        success: false,
-        message: e.message ?? 'Failed to fetch data',
-      );
-    }
-  }
+  @GET('/api/prices/{source}')
+  Future<HttpResponse<dynamic>> getPrices(@Path('source') String source);
 }

@@ -72,10 +72,11 @@ class ChartScreen extends ConsumerWidget {
                                     ? price.weight.toInt().toString()
                                     : price.weight.toString(),
                                 unit: price.weightUnit,
+                                currency: price.currency,
                                 sellPrice:
-                                    'IDR ${formatter.format(price.sellPrice.toInt())}',
+                                    '${price.currency} ${formatter.format(price.sellPrice.toInt())}',
                                 buybackPrice:
-                                    'IDR ${formatter.format(price.buybackPrice.toInt())}',
+                                    '${price.currency} ${formatter.format(price.buybackPrice.toInt())}',
                               ),
                             Gap(70),
                           ],
@@ -97,12 +98,14 @@ class _PriceListTile extends StatelessWidget {
   final String materialType;
   final String weight;
   final String unit;
+  final String currency;
   final String sellPrice;
   final String buybackPrice;
 
   const _PriceListTile({
     required this.materialType,
     required this.weight,
+    required this.currency,
     required this.unit,
     required this.sellPrice,
     required this.buybackPrice,

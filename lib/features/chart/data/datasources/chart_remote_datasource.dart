@@ -10,23 +10,26 @@ class ChartRemoteDatasource {
 
   Future<BaseResponse<List<GoldPriceDto>>> getPrices(String source) async {
     try {
-      final response = await _api.get('/api/prices/$source');
-      if (response.success && response.data != null) {
-        final rawList = response.data as List<dynamic>;
+      final response = await _api.getPrices(source);
+      final json = response.data as Map<String, dynamic>;
+      final base = BaseResponse<dynamic>.fromJson(json, (data) => data);
+
+      if (base.success && base.data != null) {
+        final rawList = base.data as List<dynamic>;
         final dtos = rawList
             .map((e) => GoldPriceDto.fromJson(e as Map<String, dynamic>))
             .toList();
         return BaseResponse(
           success: true,
           data: dtos,
-          count: response.count,
-          timestamp: response.timestamp,
-          cached: response.cached,
+          count: base.count,
+          timestamp: base.timestamp,
+          cached: base.cached,
         );
       }
       return BaseResponse(
         success: false,
-        message: response.message ?? 'Data unavailable',
+        message: base.message ?? 'Data unavailable',
       );
     } on DioException catch (e) {
       return BaseResponse(
