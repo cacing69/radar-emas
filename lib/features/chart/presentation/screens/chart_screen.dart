@@ -20,7 +20,7 @@ class ChartScreen extends ConsumerWidget {
       backgroundColor: Colors.grey.shade100,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
-        child: SafeArea(child: RadarEmasAppBar(child: Text("Provider"))),
+        child: SafeArea(child: RadarEmasAppBar(child: Text("Chart"))),
       ),
       body: SafeArea(
         child: Padding(
@@ -74,9 +74,9 @@ class ChartScreen extends ConsumerWidget {
                                 unit: price.weightUnit,
                                 currency: price.currency,
                                 sellPrice:
-                                    '${price.currency} ${formatter.format(price.sellPrice.toInt())}',
+                                    '${formatter.format(price.sellPrice.toInt())}',
                                 buybackPrice:
-                                    '${price.currency} ${formatter.format(price.buybackPrice.toInt())}',
+                                    '${formatter.format(price.buybackPrice.toInt())}',
                               ),
                             Gap(70),
                           ],
@@ -120,7 +120,7 @@ class _PriceListTile extends StatelessWidget {
           ConstrainedBox(
             constraints: BoxConstraints(minWidth: 55, maxWidth: 60),
             child: AspectRatio(
-              aspectRatio: 2 / 1.5,
+              aspectRatio: 2 / 1.7,
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.accent,
@@ -128,19 +128,33 @@ class _PriceListTile extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Row(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        weight,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            weight,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            unit,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                       Text(
-                        unit,
+                        currency,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,

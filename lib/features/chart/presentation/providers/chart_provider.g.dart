@@ -116,7 +116,7 @@ final class ChartPricesProvider
   }
 }
 
-String _$chartPricesHash() => r'4b48bd347130a9f3a2bb84f69c31bb04d2f35907';
+String _$chartPricesHash() => r'40ed95e9fb2cd54f0809fe50cf414396019ee7e1';
 
 final class ChartPricesFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<GoldPrice>>, String> {

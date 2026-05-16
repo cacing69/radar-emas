@@ -5,15 +5,19 @@ part 'gold_price.freezed.dart';
 @freezed
 abstract class GoldPrice with _$GoldPrice {
   const factory GoldPrice({
-    required String source,
-    required String material,
-    required String materialType,
-    required double weight,
-    required String weightUnit,
-    required double sellPrice,
-    required double buybackPrice,
-    required String currency,
-    required String recordedDate,
-    required String lineKey,
+    @Default('') String source,
+    @Default('') String material,
+    @Default('') String materialType,
+    @Default(0) double weight,
+    @Default('gr') String weightUnit,
+    @Default(0) double sellPrice,
+    @Default(0) double buybackPrice,
+    @Default('IDR') String currency,
+    @Default('') String recordedDate,
+    @Default('') String lineKey,
+    @Default('') String url,
+    @Default('') String displayName,
+    @Default('') String logo,
+    @Default('') String urlHomepage,
   }) = _GoldPrice;
 }

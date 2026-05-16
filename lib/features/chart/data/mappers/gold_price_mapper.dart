@@ -15,6 +15,10 @@ class GoldPriceMapper {
       currency: dto.currency,
       recordedDate: dto.recordedDate,
       lineKey: dto.lineKey,
+      url: dto.url,
+      displayName: dto.displayName,
+      logo: dto.logo,
+      urlHomepage: dto.urlHomepage,
     );
   }
 

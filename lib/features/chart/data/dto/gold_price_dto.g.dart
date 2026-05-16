@@ -8,16 +8,20 @@ part of 'gold_price_dto.dart';
 
 _GoldPriceDto _$GoldPriceDtoFromJson(Map<String, dynamic> json) =>
     _GoldPriceDto(
-      source: json['source'] as String,
-      material: json['material'] as String,
-      materialType: json['materialType'] as String,
-      weight: (json['weight'] as num).toDouble(),
-      weightUnit: json['weightUnit'] as String,
-      sellPrice: (json['sellPrice'] as num).toDouble(),
-      buybackPrice: (json['buybackPrice'] as num).toDouble(),
-      currency: json['currency'] as String,
-      recordedDate: json['recordedDate'] as String,
-      lineKey: json['lineKey'] as String,
+      source: json['source'] as String? ?? '',
+      material: json['material'] as String? ?? '',
+      materialType: json['materialType'] as String? ?? '',
+      weight: (json['weight'] as num?)?.toDouble() ?? 0,
+      weightUnit: json['weightUnit'] as String? ?? 'gr',
+      sellPrice: (json['sellPrice'] as num?)?.toDouble() ?? 0,
+      buybackPrice: (json['buybackPrice'] as num?)?.toDouble() ?? 0,
+      currency: json['currency'] as String? ?? 'IDR',
+      recordedDate: json['recordedDate'] as String? ?? '',
+      lineKey: json['lineKey'] as String? ?? '',
+      url: json['url'] as String? ?? '',
+      displayName: json['displayName'] as String? ?? '',
+      logo: json['logo'] as String? ?? '',
+      urlHomepage: json['urlHomepage'] as String? ?? '',
     );
 
 Map<String, dynamic> _$GoldPriceDtoToJson(_GoldPriceDto instance) =>
@@ -32,4 +36,8 @@ Map<String, dynamic> _$GoldPriceDtoToJson(_GoldPriceDto instance) =>
       'currency': instance.currency,
       'recordedDate': instance.recordedDate,
       'lineKey': instance.lineKey,
+      'url': instance.url,
+      'displayName': instance.displayName,
+      'logo': instance.logo,
+      'urlHomepage': instance.urlHomepage,
     };

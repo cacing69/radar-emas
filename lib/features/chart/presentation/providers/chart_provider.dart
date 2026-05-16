@@ -18,5 +18,9 @@ Future<List<GoldPrice>> chartPrices(Ref ref, String source) async {
   ref.keepAlive();
   final repository = ref.watch(chartRepositoryProvider);
   final usecase = GetChartPrices(repository);
-  return usecase(source);
+  final result = await usecase(source);
+  return result.fold(
+    onSuccess: (data) => data,
+    onFailure: (message) => throw Exception(message),
+  );
 }

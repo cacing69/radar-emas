@@ -154,7 +154,9 @@ class _ChartCardState extends State<ChartCard> {
               ),
             ],
             Gap(5),
-            ConstrainedBox(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 200, maxHeight: 200),
               child: LineChart(
                 LineChartData(
@@ -180,7 +182,9 @@ class _ChartCardState extends State<ChartCard> {
                     ),
                   ),
                   lineTouchData: LineTouchData(
-                    handleBuiltInTouches: false,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (_) => [],
+                    ),
                     touchCallback: (event, response) {
                       final spots = response?.lineBarSpots;
                       if (spots != null && spots.isNotEmpty) {
@@ -246,7 +250,8 @@ class _ChartCardState extends State<ChartCard> {
                 ),
               ),
             ),
-          ],
+          ),
+        ],
         ),
       ),
     );
@@ -288,7 +293,7 @@ Widget _bottomTitles(double value, TitleMeta meta) {
   final index = value.toInt();
   if (index < 0 || index >= labels.length) return const SizedBox();
   return Padding(
-    padding: const EdgeInsets.only(top: 8),
+    padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
     child: Text(
       labels[index],
       style: const TextStyle(fontSize: 10, color: Colors.grey),

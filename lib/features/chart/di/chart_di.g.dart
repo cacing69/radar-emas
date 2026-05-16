@@ -90,7 +90,7 @@ final class GoldPriceMapperProvider
   }
 }
 
-String _$goldPriceMapperHash() => r'dbd9e4c166401b85724a0ddf75d7fceca88f63ad';
+String _$goldPriceMapperHash() => r'400ea1e3978d58fe0720d81d2c4e78828ce54c7a';
 
 @ProviderFor(chartRemoteDatasource)
 final chartRemoteDatasourceProvider = ChartRemoteDatasourceProvider._();
@@ -138,7 +138,7 @@ final class ChartRemoteDatasourceProvider
 }
 
 String _$chartRemoteDatasourceHash() =>
-    r'61c9eaccf507eb6aacf7c245c302157110e3fbee';
+    r'c71a7f8896b34a8998b437509d002f8f6a19b8b1';
 
 @ProviderFor(chartRepository)
 final chartRepositoryProvider = ChartRepositoryProvider._();
