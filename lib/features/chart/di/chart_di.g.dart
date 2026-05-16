@@ -92,6 +92,47 @@ final class GoldPriceMapperProvider
 
 String _$goldPriceMapperHash() => r'400ea1e3978d58fe0720d81d2c4e78828ce54c7a';
 
+@ProviderFor(sourceMapper)
+final sourceMapperProvider = SourceMapperProvider._();
+
+final class SourceMapperProvider
+    extends $FunctionalProvider<SourceMapper, SourceMapper, SourceMapper>
+    with $Provider<SourceMapper> {
+  SourceMapperProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sourceMapperProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sourceMapperHash();
+
+  @$internal
+  @override
+  $ProviderElement<SourceMapper> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SourceMapper create(Ref ref) {
+    return sourceMapper(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SourceMapper value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SourceMapper>(value),
+    );
+  }
+}
+
+String _$sourceMapperHash() => r'fd6fd272b83bb7c5fc4c0d23d9c5083fbeb90bc4';
+
 @ProviderFor(chartRemoteDatasource)
 final chartRemoteDatasourceProvider = ChartRemoteDatasourceProvider._();
 
@@ -140,6 +181,54 @@ final class ChartRemoteDatasourceProvider
 String _$chartRemoteDatasourceHash() =>
     r'c71a7f8896b34a8998b437509d002f8f6a19b8b1';
 
+@ProviderFor(sourceRemoteDatasource)
+final sourceRemoteDatasourceProvider = SourceRemoteDatasourceProvider._();
+
+final class SourceRemoteDatasourceProvider
+    extends
+        $FunctionalProvider<
+          SourceRemoteDatasource,
+          SourceRemoteDatasource,
+          SourceRemoteDatasource
+        >
+    with $Provider<SourceRemoteDatasource> {
+  SourceRemoteDatasourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sourceRemoteDatasourceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sourceRemoteDatasourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<SourceRemoteDatasource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SourceRemoteDatasource create(Ref ref) {
+    return sourceRemoteDatasource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SourceRemoteDatasource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SourceRemoteDatasource>(value),
+    );
+  }
+}
+
+String _$sourceRemoteDatasourceHash() =>
+    r'118fb97657b603b5a78310e6d9f78bc054a836c5';
+
 @ProviderFor(chartRepository)
 final chartRepositoryProvider = ChartRepositoryProvider._();
 
@@ -181,3 +270,49 @@ final class ChartRepositoryProvider
 }
 
 String _$chartRepositoryHash() => r'3a6f9ee783ffe04abcac69fbe68098412ec44998';
+
+@ProviderFor(sourceRepository)
+final sourceRepositoryProvider = SourceRepositoryProvider._();
+
+final class SourceRepositoryProvider
+    extends
+        $FunctionalProvider<
+          SourceRepository,
+          SourceRepository,
+          SourceRepository
+        >
+    with $Provider<SourceRepository> {
+  SourceRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sourceRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sourceRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<SourceRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SourceRepository create(Ref ref) {
+    return sourceRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SourceRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SourceRepository>(value),
+    );
+  }
+}
+
+String _$sourceRepositoryHash() => r'02902c9253823218026b068dd7066a05da6a980c';

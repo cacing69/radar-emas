@@ -61,6 +61,45 @@ abstract class _$SelectedSource extends $Notifier<String> {
   }
 }
 
+@ProviderFor(sources)
+final sourcesProvider = SourcesProvider._();
+
+final class SourcesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Source>>,
+          List<Source>,
+          FutureOr<List<Source>>
+        >
+    with $FutureModifier<List<Source>>, $FutureProvider<List<Source>> {
+  SourcesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sourcesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sourcesHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Source>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Source>> create(Ref ref) {
+    return sources(ref);
+  }
+}
+
+String _$sourcesHash() => r'9ad0eadfb709dc06193e8179544e6d38c41202a2';
+
 @ProviderFor(chartPrices)
 final chartPricesProvider = ChartPricesFamily._();
 
@@ -116,7 +155,7 @@ final class ChartPricesProvider
   }
 }
 
-String _$chartPricesHash() => r'40ed95e9fb2cd54f0809fe50cf414396019ee7e1';
+String _$chartPricesHash() => r'f7de2e7f0d2a410268aa1ffbd8bae0f025c8ede4';
 
 final class ChartPricesFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<GoldPrice>>, String> {

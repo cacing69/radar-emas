@@ -6,9 +6,12 @@ part 'logam_mulia_api.g.dart';
 
 @RestApi(baseUrl: 'https://logam-mulia-api.iamutaki.workers.dev')
 abstract class LogamMuliaApi {
-  factory LogamMuliaApi() => _LogamMuliaApi(ApiClient.create(
-        'https://logam-mulia-api.iamutaki.workers.dev',
-      ).dio);
+  factory LogamMuliaApi() => _LogamMuliaApi(
+    ApiClient.create('https://logam-mulia-api.iamutaki.workers.dev').dio,
+  );
+
+  @GET('/api/prices')
+  Future<HttpResponse<dynamic>> getSources();
 
   @GET('/api/prices/{source}')
   Future<HttpResponse<dynamic>> getPrices(@Path('source') String source);
