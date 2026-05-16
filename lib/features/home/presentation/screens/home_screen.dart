@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:radar_emas/core/widgets/radar_emas_nav_bar.dart';
 import 'package:radar_emas/features/chart/presentation/screens/chart_screen.dart';
-import 'package:radar_emas/features/main_tab/screens/main_screen.dart';
+import 'package:radar_emas/features/main/presentation/screens/main_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,10 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     layoutBuilder: (currentChild, previousChildren) {
                       return Stack(
                         alignment: Alignment.topCenter,
-                        children: [
-                          ...previousChildren,
-                          if (currentChild != null) currentChild,
-                        ],
+                        children: [...previousChildren, ?currentChild],
                       );
                     },
                     child: KeyedSubtree(
@@ -57,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: 10,
+                  bottom: 5,
                   left: 0,
                   right: 0,
                   child: RadarEmasNavBar(

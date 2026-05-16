@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:radar_emas/features/home/screens/home_screen.dart';
+import 'package:radar_emas/features/home/presentation/screens/home_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

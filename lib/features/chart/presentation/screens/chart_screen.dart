@@ -40,22 +40,25 @@ class ChartScreen extends ConsumerWidget {
               child: SafeArea(
                 child: GestureDetector(
                   onTap: () => _showSourceSheet(context, ref),
-                  child: RadarEmasAppBar(
-                    child: Skeletonizer(
-                      enabled: sourcesAsync.isLoading,
-                      child: Row(
-                        children: [
-                          Gap(5),
-                          Icon(
-                            LucideIcons.arrowLeftRight,
-                            size: 20,
-                            color: AppColors.primary,
-                          ),
-                          Gap(10),
-                          Text(
-                            selectedSource?.displayName ?? 'Select Provider',
-                          ),
-                        ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: RadarEmasAppBar(
+                      child: Skeletonizer(
+                        enabled: sourcesAsync.isLoading,
+                        child: Row(
+                          children: [
+                            Gap(5),
+                            Icon(
+                              LucideIcons.arrowLeftRight,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
+                            Gap(10),
+                            Text(
+                              selectedSource?.displayName ?? 'Select Provider',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -110,7 +113,7 @@ class ChartScreen extends ConsumerWidget {
                                   )
                                 : '-',
                           ),
-                        Gap(70),
+                        isPortrait ? Gap(70) : const SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -146,7 +149,9 @@ class ChartScreen extends ConsumerWidget {
 
               return Row(
                 children: [
-                  Expanded(child: priceList),
+                  Expanded(
+                    child: Column(children: [RadarEmasAppBar(), priceList]),
+                  ),
                   const Gap(6),
                   Expanded(child: ChartCard(isPortrait: isPortrait)),
                 ],
@@ -172,7 +177,7 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
     builder: (ctx) {
       var query = '';
       var displayQuery = '';
-      Timer? _debounce;
+      Timer? debounce;
 
       return StatefulBuilder(
         builder: (ctx, setState) {
@@ -211,8 +216,8 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
                     onChanged: (v) {
                       displayQuery = v;
                       setState(() {});
-                      _debounce?.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 300), () {
+                      debounce?.cancel();
+                      debounce = Timer(const Duration(milliseconds: 300), () {
                         query = displayQuery;
                         setState(() {});
                       });
@@ -380,7 +385,11 @@ class _PriceListTile extends StatelessWidget {
               ),
               Text(
                 buybackPrice,
-                style: const TextStyle(fontSize: 11, color: AppColors.accent),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),

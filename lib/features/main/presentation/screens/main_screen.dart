@@ -10,13 +10,7 @@ class MainScreen extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: SingleChildScrollView(
         child: Column(
-          children: [
-            Gap(50),
-            Placeholder(),
-            Placeholder(),
-            Placeholder(),
-            Gap(50),
-          ],
+          children: [Placeholder(), Placeholder(), Placeholder(), Gap(55)],
         ),
       ),
     );

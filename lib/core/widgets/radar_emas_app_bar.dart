@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:radar_emas/core/theme/app_colors.dart';
+import 'package:radar_emas/features/about/presentation/screens/about_screen.dart';
 import 'package:radar_emas/features/profile/screens/profile_screen.dart';
 import 'package:radar_emas/features/settings/screens/settings_screen.dart';
 
@@ -16,7 +17,7 @@ class RadarEmasAppBar extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: 70, maxHeight: 70),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
             Expanded(
@@ -115,7 +116,7 @@ class RadarEmasAppBar extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SettingsScreen(),
+                            builder: (context) => const AboutScreen(),
                           ),
                         );
                       },
