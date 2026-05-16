@@ -29,100 +29,127 @@ class ChartScreen extends ConsumerWidget {
     );
     final currencyFormat = NumberFormat('#,###', 'id_ID');
 
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: SafeArea(
-          child: GestureDetector(
-            onTap: () => _showSourceSheet(context, ref),
-            child: RadarEmasAppBar(
-              child: Skeletonizer(
-                enabled: sourcesAsync.isLoading,
-                child: Row(
-                  children: [
-                    Gap(5),
-                    Icon(
-                      LucideIcons.arrowLeftRight,
-                      size: 20,
-                      color: AppColors.primary,
-                    ),
-                    Gap(10),
-                    Text(selectedSource?.displayName ?? 'Select Provider'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              const ChartCard(),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(16),
-                    ),
-                    boxShadow: AppShadows.subtle,
-                  ),
-                  child: pricesAsync.when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (error, _) => Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+      appBar: isPortrait
+          ? PreferredSize(
+              preferredSize: Size.fromHeight(100),
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: () => _showSourceSheet(context, ref),
+                  child: RadarEmasAppBar(
+                    child: Skeletonizer(
+                      enabled: sourcesAsync.isLoading,
+                      child: Row(
                         children: [
-                          Text(
-                            error.toString(),
-                            style: const TextStyle(color: Colors.red),
+                          Gap(5),
+                          Icon(
+                            LucideIcons.arrowLeftRight,
+                            size: 20,
+                            color: AppColors.primary,
                           ),
-                          const Gap(12),
-                          ElevatedButton(
-                            onPressed: () =>
-                                ref.invalidate(chartPricesProvider(source)),
-                            child: const Text('Retry'),
+                          Gap(10),
+                          Text(
+                            selectedSource?.displayName ?? 'Select Provider',
                           ),
                         ],
                       ),
                     ),
-                    data: (prices) => SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (final price in prices)
-                              _PriceListTile(
-                                materialType: price.materialType,
-                                weight: formatCompact(price.weight),
-                                unit: price.weightUnit,
-                                currency: price.currency,
-                                sellPrice: currencyFormat.format(
-                                  price.sellPrice.toInt(),
-                                ),
-                                buybackPrice: price.buybackPrice.toInt() > 0
-                                    ? currencyFormat.format(
-                                        price.buybackPrice.toInt(),
-                                      )
-                                    : '-',
-                              ),
-                            Gap(70),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ),
-            ],
+            )
+          : null,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: OrientationBuilder(
+            builder: (context, orientation) {
+              final isPortrait = orientation == Orientation.portrait;
+
+              final priceListContent = pricesAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        error.toString(),
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      const Gap(12),
+                      ElevatedButton(
+                        onPressed: () =>
+                            ref.invalidate(chartPricesProvider(source)),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
+                data: (prices) => SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final price in prices)
+                          _PriceListTile(
+                            materialType: price.materialType,
+                            weight: formatCompact(price.weight),
+                            unit: price.weightUnit,
+                            currency: price.currency,
+                            sellPrice: currencyFormat.format(
+                              price.sellPrice.toInt(),
+                            ),
+                            buybackPrice: price.buybackPrice.toInt() > 0
+                                ? currencyFormat.format(
+                                    price.buybackPrice.toInt(),
+                                  )
+                                : '-',
+                          ),
+                        Gap(70),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+
+              final priceList = Container(
+                width: double.infinity,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: isPortrait ? Radius.zero : Radius.circular(16),
+                    topRight: isPortrait ? Radius.circular(16) : Radius.zero,
+                    bottomRight: isPortrait ? Radius.zero : Radius.zero,
+                    bottomLeft: isPortrait ? Radius.zero : Radius.circular(16),
+                  ),
+                  boxShadow: AppShadows.subtle,
+                ),
+                child: priceListContent,
+              );
+
+              if (isPortrait) {
+                return Column(
+                  children: [
+                    const ChartCard(),
+                    Expanded(child: priceList),
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: priceList),
+                  const Gap(6),
+                  Expanded(child: ChartCard(isPortrait: isPortrait)),
+                ],
+              );
+            },
           ),
         ),
       ),

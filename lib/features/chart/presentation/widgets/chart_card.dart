@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:radar_emas/core/theme/app_colors.dart';
 
 class ChartCard extends StatefulWidget {
-  const ChartCard({super.key});
+  final bool isPortrait;
+  const ChartCard({super.key, this.isPortrait = true});
 
   @override
   State<ChartCard> createState() => _ChartCardState();
@@ -46,8 +47,12 @@ class _ChartCardState extends State<ChartCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: widget.isPortrait ? Radius.circular(16) : Radius.zero,
+          topRight: widget.isPortrait
+              ? Radius.circular(16)
+              : Radius.circular(16),
+          bottomRight: widget.isPortrait ? Radius.zero : Radius.circular(16),
+          bottomLeft: widget.isPortrait ? Radius.zero : Radius.zero,
         ),
         boxShadow: AppShadows.subtle,
       ),
