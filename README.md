@@ -1,17 +1,12 @@
-# radar_emas
+# Radar Emas
 
-A new Flutter project.
+A Flutter app to track gold prices in Indonesia.
 
-## Getting Started
+## Data Source
 
-This project is a starting point for a Flutter application.
+This app uses data from **Logam Mulia API** - an open-source API for Indonesian gold prices.
 
-A few resources to get you started if this is your first Flutter project:
+[github.com/cacing69/logam-mulia-api](https://github.com/cacing69/logam-mulia-api)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<!-- GitAds-Verify:
+5DCPAV1PLTRK8JNPINU2HI4LKQ9KTGBH -->
