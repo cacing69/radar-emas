@@ -127,28 +127,37 @@ class ChartScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                data: (prices) => SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Gap(10),
-                        for (final price in prices)
-                          _PriceListTile(
-                            price: price,
-                            currencyFormat: currencyFormat,
-                            isSelected: selectedChartPrice == price,
-                            onTap: () => ref
-                                .read(selectedChartPriceProvider.notifier)
-                                .select(price),
-                          ),
-                        Gap(10),
-                        isPortrait ? Gap(70) : const SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
-                ),
+                data: (prices) {
+                    final sortedPrices = [...prices]..sort((a, b) {
+                        final nameCompare =
+                            a.materialType.compareTo(b.materialType);
+                        if (nameCompare != 0) return nameCompare;
+                        return a.weight.compareTo(b.weight);
+                      });
+
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Gap(10),
+                            for (final price in sortedPrices)
+                              _PriceListTile(
+                                price: price,
+                                currencyFormat: currencyFormat,
+                                isSelected: selectedChartPrice == price,
+                                onTap: () => ref
+                                    .read(selectedChartPriceProvider.notifier)
+                                    .select(price),
+                              ),
+                            Gap(10),
+                            isPortrait ? Gap(70) : const SizedBox.shrink(),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
               );
 
               final priceList = Container(
