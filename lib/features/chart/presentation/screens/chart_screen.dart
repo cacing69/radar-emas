@@ -94,7 +94,7 @@ class ChartScreen extends ConsumerWidget {
                             _PriceListTile(
                               price: GoldPrice(
                                 materialType: 'Emas Antam',
-                                weight: 1,
+                                weight: 100,
                                 weightUnit: 'gr',
                                 sellPrice: 1500000,
                                 buybackPrice: 1400000,
@@ -172,7 +172,7 @@ class ChartScreen extends ConsumerWidget {
               if (isPortrait) {
                 return Column(
                   children: [
-                    ChartCard(isPortrait: isPortrait),
+                    Expanded(child: ChartCard(isPortrait: isPortrait)),
                     Expanded(child: priceList),
                   ],
                 );
@@ -280,7 +280,6 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
             const Gap(8),
             Flexible(
               child: ListView.separated(
-                shrinkWrap: true,
                 itemCount: filtered.length,
                 separatorBuilder: (_, __) =>
                     const Divider(height: 1, indent: 16, endIndent: 16),
@@ -422,13 +421,21 @@ class _PriceListTile extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            Text(
-                              price.weightUnit,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
+                            Builder(
+                              builder: (context) {
+                                if (Skeletonizer.maybeOf(context)?.enabled ==
+                                    true) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Text(
+                                  price.weightUnit,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

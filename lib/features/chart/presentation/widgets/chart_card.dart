@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:radar_emas/core/theme/app_colors.dart';
 import 'package:radar_emas/features/chart/domain/entities/gold_price.dart';
 import 'package:radar_emas/features/chart/presentation/providers/chart_provider.dart';
@@ -234,17 +235,43 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                           ],
                         ),
                       ),
-                      data: (prices) {
-                        if (prices.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              'No data available',
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                          );
-                        }
-                        return _buildChart(prices);
+                        data: (prices) {
+                          if (prices.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      LucideIcons.chartNoAxesCombined,
+                                      size: 40,
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    const Gap(16),
+                                    Text(
+                                      'No Data',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    const Gap(4),
+                                    Text(
+                                      'Price history is not available',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return _buildChart(prices);
                       },
                     ) ??
                     _buildChartSkeleton(),
