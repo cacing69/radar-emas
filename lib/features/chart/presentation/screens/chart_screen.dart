@@ -393,7 +393,7 @@ class _PriceListTile extends StatelessWidget {
           color: isSelected ? AppColors.primary.withValues(alpha: 0.06) : null,
           borderRadius: BorderRadius.circular(8),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Row(
           children: [
             ConstrainedBox(

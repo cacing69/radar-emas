@@ -22,9 +22,7 @@ class ChartCard extends ConsumerStatefulWidget {
 }
 
 class _ChartCardState extends ConsumerState<ChartCard> {
-  double? _touchedBeli;
-  double? _touchedJual;
-  String? _touchedDate;
+  int? _touchedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +37,34 @@ class _ChartCardState extends ConsumerState<ChartCard> {
 
     ref.listen(selectedChartPriceProvider, (prev, next) {
       if (prev != next) {
-        _touchedBeli = null;
-        _touchedJual = null;
-        _touchedDate = null;
+        _touchedIndex = null;
       }
     });
 
     final prices = historyAsync?.asData?.value ?? [];
-    final buyback = _touchedBeli ?? selectedPrice?.buybackPrice ?? 0;
-    final sell = _touchedJual ?? selectedPrice?.sellPrice ?? 0;
-    final dateText = _touchedDate ??
-        (!isLoading && prices.isNotEmpty
-            ? _formatDate(_groupByDate(prices).keys.last)
-            : '');
+    final grouped = _groupByDate(prices);
+    final dates = grouped.keys.toList();
+
+    final currentIndex = _touchedIndex ??
+        (dates.isNotEmpty ? dates.length - 1 : null);
+    final hasPrev = currentIndex != null && currentIndex > 0;
+
+    final current = currentIndex != null && currentIndex < dates.length
+        ? grouped[dates[currentIndex]]!
+        : selectedPrice ?? const GoldPrice();
+    final prev = hasPrev ? grouped[dates[currentIndex - 1]]! : null;
+
+    final buyback = current.buybackPrice;
+    final sell = current.sellPrice;
+    final buybackDiff = prev != null ? buyback - prev.buybackPrice : null;
+    final sellDiff = prev != null ? sell - prev.sellPrice : null;
+    final spread = buyback - sell;
+
+    final dateText = currentIndex != null && currentIndex < dates.length
+        ? _formatDate(dates[currentIndex])
+        : '';
+
+    final fmt = NumberFormat('#,###', 'id_ID');
 
     return Container(
       decoration: BoxDecoration(
@@ -104,11 +117,10 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Spacer(),
                   Text(
                     dateText,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.grey,
                     ),
@@ -130,12 +142,15 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Legend(color: AppColors.accent, label: 'Buyback'),
-                          const Gap(4),
+                          _Legend(
+                            color: AppColors.accent,
+                            label: 'Buyback',
+                            diff: buybackDiff,
+                          ),
                           Text(
-                            'IDR ${NumberFormat('#,###', 'id_ID').format(buyback)}',
+                            'IDR ${fmt.format(buyback)}',
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: AppColors.accent,
                             ),
@@ -158,12 +173,15 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Legend(color: AppColors.primary, label: 'Sell'),
-                          const Gap(4),
+                          _Legend(
+                            color: AppColors.primary,
+                            label: 'Sell',
+                            diff: sellDiff,
+                          ),
                           Text(
-                            'IDR ${NumberFormat('#,###', 'id_ID').format(sell)}',
+                            'IDR ${fmt.format(sell)}',
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),
@@ -174,6 +192,23 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                   ),
                 ],
               ),
+              if (!isLoading && currentIndex != null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Spread: IDR ${fmt.format(spread.abs())}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               Gap(5),
               Expanded(
                 child: historyAsync?.when(
@@ -303,18 +338,12 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                   (s) => s.barIndex == 0,
                   orElse: () => spots.first,
                 );
-                final jual = spots.firstWhere(
-                  (s) => s.barIndex == 1,
-                  orElse: () => spots.first,
-                );
-                setState(() {
-                  _touchedBeli = buyback.y;
-                  _touchedJual = jual.y;
-                  final dateIndex = buyback.x.toInt();
-                  if (dateIndex >= 0 && dateIndex < dates.length) {
-                    _touchedDate = _formatDate(dates[dateIndex]);
-                  }
-                });
+                final idx = buyback.x.toInt();
+                if (idx >= 0 && idx < dates.length) {
+                  setState(() {
+                    _touchedIndex = idx;
+                  });
+                }
               }
             },
           ),
@@ -399,11 +428,13 @@ class _ChartCardState extends ConsumerState<ChartCard> {
 class _Legend extends StatelessWidget {
   final Color color;
   final String label;
+  final double? diff;
 
-  const _Legend({required this.color, required this.label});
+  const _Legend({required this.color, required this.label, this.diff});
 
   @override
   Widget build(BuildContext context) {
+    final diffText = diff != null ? _formatDiff(diff!) : null;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -421,7 +452,28 @@ class _Legend extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
+        if (diffText != null) ...[
+          Gap(6),
+          Text(
+            diffText,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: diff == 0
+                  ? AppColors.primary
+                  : diff! > 0
+                      ? Colors.green
+                      : Colors.red,
+            ),
+          ),
+        ],
       ],
     );
+  }
+
+  String _formatDiff(double value) {
+    final fmt = NumberFormat('#,###', 'id_ID');
+    final sign = value > 0 ? '+' : value < 0 ? '-' : '';
+    return '$sign${fmt.format(value.abs())}';
   }
 }
