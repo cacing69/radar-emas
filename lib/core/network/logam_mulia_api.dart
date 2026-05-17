@@ -15,4 +15,10 @@ abstract class LogamMuliaApi {
 
   @GET('/api/prices/{source}')
   Future<HttpResponse<dynamic>> getPrices(@Path('source') String source);
+
+  @GET('/api/prices/{source}/history')
+  Future<HttpResponse<dynamic>> getPriceHistories(
+    @Path('source') String source,
+    @Queries() Map<String, dynamic> queries,
+  );
 }

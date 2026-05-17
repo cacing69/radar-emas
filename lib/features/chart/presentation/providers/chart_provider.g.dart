@@ -61,6 +61,59 @@ abstract class _$SelectedSource extends $Notifier<String> {
   }
 }
 
+@ProviderFor(SelectedChartPrice)
+final selectedChartPriceProvider = SelectedChartPriceProvider._();
+
+final class SelectedChartPriceProvider
+    extends $NotifierProvider<SelectedChartPrice, GoldPrice?> {
+  SelectedChartPriceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedChartPriceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedChartPriceHash();
+
+  @$internal
+  @override
+  SelectedChartPrice create() => SelectedChartPrice();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GoldPrice? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GoldPrice?>(value),
+    );
+  }
+}
+
+String _$selectedChartPriceHash() =>
+    r'49040abd7310916f2dc0c21b99e0d02a309fe8d6';
+
+abstract class _$SelectedChartPrice extends $Notifier<GoldPrice?> {
+  GoldPrice? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<GoldPrice?, GoldPrice?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<GoldPrice?, GoldPrice?>,
+              GoldPrice?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(sources)
 final sourcesProvider = SourcesProvider._();
 
@@ -173,4 +226,79 @@ final class ChartPricesFamily extends $Family
 
   @override
   String toString() => r'chartPricesProvider';
+}
+
+@ProviderFor(priceHistory)
+final priceHistoryProvider = PriceHistoryFamily._();
+
+final class PriceHistoryProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GoldPrice>>,
+          List<GoldPrice>,
+          FutureOr<List<GoldPrice>>
+        >
+    with $FutureModifier<List<GoldPrice>>, $FutureProvider<List<GoldPrice>> {
+  PriceHistoryProvider._({
+    required PriceHistoryFamily super.from,
+    required GoldPrice super.argument,
+  }) : super(
+         retry: null,
+         name: r'priceHistoryProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$priceHistoryHash();
+
+  @override
+  String toString() {
+    return r'priceHistoryProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<GoldPrice>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<GoldPrice>> create(Ref ref) {
+    final argument = this.argument as GoldPrice;
+    return priceHistory(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PriceHistoryProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$priceHistoryHash() => r'1aa658fc14c5363e4482fa695b0074d13f7443f4';
+
+final class PriceHistoryFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<GoldPrice>>, GoldPrice> {
+  PriceHistoryFamily._()
+    : super(
+        retry: null,
+        name: r'priceHistoryProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  PriceHistoryProvider call(GoldPrice price) =>
+      PriceHistoryProvider._(argument: price, from: this);
+
+  @override
+  String toString() => r'priceHistoryProvider';
 }

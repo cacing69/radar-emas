@@ -1,48 +1,55 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:radar_emas/core/theme/app_colors.dart';
+import 'package:radar_emas/features/chart/domain/entities/gold_price.dart';
+import 'package:radar_emas/features/chart/presentation/providers/chart_provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class ChartCard extends StatefulWidget {
+class ChartCard extends ConsumerStatefulWidget {
   final bool isPortrait;
-  const ChartCard({super.key, this.isPortrait = true});
+
+  const ChartCard({
+    super.key,
+    this.isPortrait = true,
+  });
 
   @override
-  State<ChartCard> createState() => _ChartCardState();
+  ConsumerState<ChartCard> createState() => _ChartCardState();
 }
 
-class _ChartCardState extends State<ChartCard> {
-  late final List<FlSpot> _beliSpots;
-  late final List<FlSpot> _jualSpots;
+class _ChartCardState extends ConsumerState<ChartCard> {
   double? _touchedBeli;
   double? _touchedJual;
 
   @override
-  void initState() {
-    super.initState();
-    final random = Random();
-    double beli = 27500000.0 + random.nextInt(500000);
-    double jual = beli - 2500000 - random.nextInt(2000000);
-    _beliSpots = List.generate(7, (i) {
-      beli += random.nextInt(500001) - 200000;
-      beli = beli.clamp(22500000.0, 28000000.0);
-      return FlSpot(i.toDouble(), beli);
-    });
-    _jualSpots = List.generate(7, (i) {
-      jual += random.nextInt(500001) - 200000;
-      jual = jual.clamp(22000000.0, 27500000.0);
-      return FlSpot(i.toDouble(), jual);
-    });
-    _touchedBeli = _beliSpots[0].y;
-    _touchedJual = _jualSpots[0].y;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final selectedPrice = ref.watch(selectedChartPriceProvider);
+    final historyAsync = selectedPrice != null
+        ? ref.watch(priceHistoryProvider(selectedPrice))
+        : null;
+
+    final isLoading = selectedPrice == null ||
+        historyAsync == null ||
+        historyAsync.isLoading;
+
+    ref.listen(selectedChartPriceProvider, (prev, next) {
+      if (prev != next) {
+        _touchedBeli = null;
+        _touchedJual = null;
+      }
+    });
+
+    final prices = historyAsync?.asData?.value ?? [];
+    final buyback = _touchedBeli ?? selectedPrice?.buybackPrice ?? 0;
+    final sell = _touchedJual ?? selectedPrice?.sellPrice ?? 0;
+    final dateText = !isLoading && prices.isNotEmpty
+        ? _formatDate(_groupByDate(prices).keys.last)
+        : '';
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -58,48 +65,49 @@ class _ChartCardState extends State<ChartCard> {
         ),
         boxShadow: AppShadows.subtle,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 10,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.white,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          'https://www.logammulia.com/favicon.png?v=3',
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white,
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(
+                            'https://www.logammulia.com/favicon.png?v=3',
+                          ),
+                          fit: BoxFit.cover,
                         ),
-                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                ),
-                Gap(10),
-                Text(
-                  'Radar Emas',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                Spacer(),
-                Text(
-                  '28 Maret 2026',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
+                  Gap(10),
+                  Text(
+                    'Radar Emas',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
-                ),
-              ],
-            ),
-            if (_touchedBeli != null && _touchedJual != null) ...[
+                  Spacer(),
+                  Text(
+                    dateText,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
               Row(
                 children: [
                   Expanded(
@@ -118,7 +126,7 @@ class _ChartCardState extends State<ChartCard> {
                           _Legend(color: AppColors.accent, label: 'Buyback'),
                           const Gap(4),
                           Text(
-                            'IDR ${NumberFormat('#,###', 'id_ID').format(_touchedBeli!)}',
+                            'IDR ${NumberFormat('#,###', 'id_ID').format(buyback)}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -146,7 +154,7 @@ class _ChartCardState extends State<ChartCard> {
                           _Legend(color: AppColors.primary, label: 'Sell'),
                           const Gap(4),
                           Text(
-                            'IDR ${NumberFormat('#,###', 'id_ID').format(_touchedJual!)}',
+                            'IDR ${NumberFormat('#,###', 'id_ID').format(sell)}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -159,112 +167,221 @@ class _ChartCardState extends State<ChartCard> {
                   ),
                 ],
               ),
-            ],
-            Gap(5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: 200,
-                  maxHeight: 200,
-                ),
-                child: LineChart(
-                  LineChartData(
-                    gridData: const FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    titlesData: const FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          interval: 1,
-                          reservedSize: 24,
-                          getTitlesWidget: _bottomTitles,
+              Gap(5),
+              Expanded(
+                child: historyAsync?.when(
+                      loading: () => _buildChartSkeleton(),
+                      error: (error, _) => Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Failed to load chart',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const Gap(8),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, size: 20),
+                              onPressed: () => ref.invalidate(
+                                priceHistoryProvider(selectedPrice!),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    lineTouchData: LineTouchData(
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipItems: (spots) => spots.map((_) => null).toList(),
-                      ),
-                      touchCallback: (event, response) {
-                        final spots = response?.lineBarSpots;
-                        if (spots != null && spots.isNotEmpty) {
-                          final buyback = spots.firstWhere(
-                            (s) => s.barIndex == 0,
-                            orElse: () => spots.first,
+                      data: (prices) {
+                        if (prices.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              'No data available',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
                           );
-                          final jual = spots.firstWhere(
-                            (s) => s.barIndex == 1,
-                            orElse: () => spots.first,
-                          );
-                          setState(() {
-                            _touchedBeli = buyback.y;
-                            _touchedJual = jual.y;
-                          });
                         }
+                        return _buildChart(prices);
                       },
+                    ) ??
+                    _buildChartSkeleton(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartSkeleton() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Skeletonizer(
+        enabled: true,
+        child: Bone(
+          width: double.infinity,
+          height: 140,
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChart(List<GoldPrice> prices) {
+    final grouped = _groupByDate(prices);
+    final dates = grouped.keys.toList();
+
+    final beliSpots = <FlSpot>[];
+    final jualSpots = <FlSpot>[];
+
+    for (var i = 0; i < dates.length; i++) {
+      final entry = grouped[dates[i]]!;
+      beliSpots.add(FlSpot(i.toDouble(), entry.buybackPrice));
+      jualSpots.add(FlSpot(i.toDouble(), entry.sellPrice));
+    }
+
+    final allY = [...beliSpots, ...jualSpots].map((s) => s.y).toList();
+    final rawMin = allY.reduce((a, b) => a < b ? a : b);
+    final rawMax = allY.reduce((a, b) => a > b ? a : b);
+    final padding = (rawMax - rawMin) * 0.1;
+
+    final dateLabels = dates.map((d) => _formatShortDate(d)).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: LineChart(
+        LineChartData(
+          gridData: const FlGridData(show: false),
+          borderData: FlBorderData(show: false),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                reservedSize: 24,
+                getTitlesWidget: (value, meta) {
+                  final index = value.toInt();
+                  if (index < 0 || index >= dateLabels.length) {
+                    return const SizedBox();
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
+                    child: Text(
+                      dateLabels[index],
+                      style: const TextStyle(fontSize: 10, color: Colors.grey),
                     ),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: _beliSpots,
-                        isCurved: true,
-                        color: AppColors.accent,
-                        barWidth: 2.5,
-                        isStrokeCapRound: true,
-                        dotData: const FlDotData(show: false),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppColors.accent.withValues(alpha: 0.25),
-                              AppColors.accent.withValues(alpha: 0.15),
-                              AppColors.accent.withValues(alpha: 0.0),
-                            ],
-                          ),
-                        ),
-                      ),
-                      LineChartBarData(
-                        spots: _jualSpots,
-                        isCurved: true,
-                        color: AppColors.primary,
-                        barWidth: 2.5,
-                        isStrokeCapRound: true,
-                        dotData: const FlDotData(show: false),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppColors.primary.withValues(alpha: 0.15),
-                              AppColors.primary.withValues(alpha: 0.05),
-                              AppColors.primary.withValues(alpha: 0.0),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                    minY: 22000000,
-                    maxY: 28000000,
-                  ),
+                  );
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (spots) => spots.map((_) => null).toList(),
+            ),
+            touchCallback: (event, response) {
+              final spots = response?.lineBarSpots;
+              if (spots != null && spots.isNotEmpty) {
+                final buyback = spots.firstWhere(
+                  (s) => s.barIndex == 0,
+                  orElse: () => spots.first,
+                );
+                final jual = spots.firstWhere(
+                  (s) => s.barIndex == 1,
+                  orElse: () => spots.first,
+                );
+                setState(() {
+                  _touchedBeli = buyback.y;
+                  _touchedJual = jual.y;
+                });
+              }
+            },
+          ),
+          lineBarsData: [
+            LineChartBarData(
+              spots: beliSpots,
+              isCurved: true,
+              color: AppColors.accent,
+              barWidth: 2.5,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.accent.withValues(alpha: 0.25),
+                    AppColors.accent.withValues(alpha: 0.15),
+                    AppColors.accent.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+            LineChartBarData(
+              spots: jualSpots,
+              isCurved: true,
+              color: AppColors.primary,
+              barWidth: 2.5,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.15),
+                    AppColors.primary.withValues(alpha: 0.05),
+                    AppColors.primary.withValues(alpha: 0.0),
+                  ],
                 ),
               ),
             ),
           ],
+          minY: (rawMin - padding).floorToDouble(),
+          maxY: (rawMax + padding).ceilToDouble(),
         ),
       ),
     );
+  }
+
+  Map<String, GoldPrice> _groupByDate(List<GoldPrice> prices) {
+    final map = <String, GoldPrice>{};
+    for (final p in prices) {
+      final date = p.recordedDate.split('T').first;
+      map.putIfAbsent(date, () => p);
+    }
+    final sortedKeys = map.keys.toList()..sort();
+    return {for (final k in sortedKeys) k: map[k]!};
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('d MMMM yyyy', 'id_ID').format(date);
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  String _formatShortDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat.E('en_US').format(date);
+    } catch (_) {
+      return dateStr;
+    }
   }
 }
 
@@ -296,17 +413,4 @@ class _Legend extends StatelessWidget {
       ],
     );
   }
-}
-
-Widget _bottomTitles(double value, TitleMeta meta) {
-  const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  final index = value.toInt();
-  if (index < 0 || index >= labels.length) return const SizedBox();
-  return Padding(
-    padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
-    child: Text(
-      labels[index],
-      style: const TextStyle(fontSize: 10, color: Colors.grey),
-    ),
-  );
 }

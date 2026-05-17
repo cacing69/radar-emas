@@ -9,6 +9,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:radar_emas/core/theme/app_colors.dart';
 import 'package:radar_emas/core/util/format_helper.dart';
 import 'package:radar_emas/core/widgets/radar_emas_app_bar.dart';
+import 'package:radar_emas/features/chart/domain/entities/gold_price.dart';
 import 'package:radar_emas/features/chart/domain/entities/source.dart';
 import 'package:radar_emas/features/chart/presentation/providers/chart_provider.dart';
 import 'package:radar_emas/features/chart/presentation/widgets/chart_card.dart';
@@ -21,6 +22,7 @@ class ChartScreen extends ConsumerWidget {
     final source = ref.watch(selectedSourceProvider);
     final pricesAsync = ref.watch(chartPricesProvider(source));
     final sourcesAsync = ref.watch(sourcesProvider);
+    final selectedChartPrice = ref.watch(selectedChartPriceProvider);
 
     final sources = sourcesAsync.asData?.value ?? [];
     final selectedSource = sources.cast<Source?>().firstWhere(
@@ -31,6 +33,14 @@ class ChartScreen extends ConsumerWidget {
 
     final isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+
+    // Auto-select first price when data loads and nothing is selected
+    final prices = pricesAsync.asData?.value;
+    if (selectedChartPrice == null && prices != null && prices.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedChartPriceProvider.notifier).select(prices.first);
+      });
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -72,7 +82,34 @@ class ChartScreen extends ConsumerWidget {
               final isPortrait = orientation == Orientation.portrait;
 
               final priceListContent = pricesAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Skeletonizer(
+                  enabled: true,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        children: [
+                          Gap(10),
+                          for (final _ in List.generate(5, (i) => i))
+                            _PriceListTile(
+                              price: GoldPrice(
+                                materialType: 'Emas Antam',
+                                weight: 1,
+                                weightUnit: 'gr',
+                                sellPrice: 1500000,
+                                buybackPrice: 1400000,
+                                currency: 'IDR',
+                              ),
+                              currencyFormat: currencyFormat,
+                              isSelected: false,
+                              onTap: () {},
+                            ),
+                          Gap(10),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 error: (error, _) => Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -92,25 +129,21 @@ class ChartScreen extends ConsumerWidget {
                 ),
                 data: (prices) => SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Gap(10),
                         for (final price in prices)
                           _PriceListTile(
-                            materialType: price.materialType,
-                            weight: formatCompact(price.weight),
-                            unit: price.weightUnit,
-                            currency: price.currency,
-                            sellPrice: currencyFormat.format(
-                              price.sellPrice.toInt(),
-                            ),
-                            buybackPrice: price.buybackPrice.toInt() > 0
-                                ? currencyFormat.format(
-                                    price.buybackPrice.toInt(),
-                                  )
-                                : '-',
+                            price: price,
+                            currencyFormat: currencyFormat,
+                            isSelected: selectedChartPrice == price,
+                            onTap: () => ref
+                                .read(selectedChartPriceProvider.notifier)
+                                .select(price),
                           ),
+                        Gap(10),
                         isPortrait ? Gap(70) : const SizedBox.shrink(),
                       ],
                     ),
@@ -139,7 +172,7 @@ class ChartScreen extends ConsumerWidget {
               if (isPortrait) {
                 return Column(
                   children: [
-                    const ChartCard(),
+                    ChartCard(isPortrait: isPortrait),
                     Expanded(child: priceList),
                   ],
                 );
@@ -280,6 +313,7 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
                         : null,
                     onTap: () {
                       ref.read(selectedSourceProvider.notifier).select(s.name);
+                      ref.read(selectedChartPriceProvider.notifier).clear();
                       Navigator.pop(ctx);
                     },
                   );
@@ -338,119 +372,124 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
 }
 
 class _PriceListTile extends StatelessWidget {
-  final String materialType;
-  final String weight;
-  final String unit;
-  final String currency;
-  final String sellPrice;
-  final String buybackPrice;
+  final GoldPrice price;
+  final NumberFormat currencyFormat;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const _PriceListTile({
-    required this.materialType,
-    required this.weight,
-    required this.currency,
-    required this.unit,
-    required this.sellPrice,
-    required this.buybackPrice,
+    required this.price,
+    required this.currencyFormat,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(minWidth: 55, maxWidth: 60),
-            child: AspectRatio(
-              aspectRatio: 2 / 1.7,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            weight,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary.withValues(alpha: 0.06) : null,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(minWidth: 55, maxWidth: 60),
+              child: AspectRatio(
+                aspectRatio: 2 / 1.7,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.accent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              formatCompact(price.weight),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            unit,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
+                            Text(
+                              price.weightUnit,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        currency,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
+                          ],
                         ),
-                      ),
-                    ],
+                        Text(
+                          price.currency,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          const Gap(12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const Gap(12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    price.materialType,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Gap(2),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  materialType,
+                  currencyFormat.format(price.sellPrice.toInt()),
                   style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  price.buybackPrice.toInt() > 0
+                      ? currencyFormat.format(price.buybackPrice.toInt())
+                      : '-',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
-          ),
-          Gap(2),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                sellPrice,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
-                ),
-              ),
-              Text(
-                buybackPrice,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

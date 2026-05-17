@@ -6,6 +6,7 @@ import 'package:radar_emas/features/chart/data/dto/gold_price_dto.dart';
 import 'package:radar_emas/features/chart/data/dto/source_dto.dart';
 import 'package:radar_emas/features/chart/data/dto/sources_response.dart';
 import 'package:radar_emas/features/chart/domain/datasources/chart_remote_datasource.dart';
+import 'package:radar_emas/features/chart/domain/entities/price_history_params.dart';
 
 class ChartRemoteDatasourceImpl implements ChartRemoteDatasource {
   final LogamMuliaApi _api;
@@ -43,5 +44,39 @@ class ChartRemoteDatasourceImpl implements ChartRemoteDatasource {
     } on DioException catch (e) {
       throw Exception(e.message ?? 'Failed to fetch prices');
     }
+  }
+
+  @override
+  Future<List<GoldPriceDto>> getPriceHistories(
+    PriceHistoryParams params,
+  ) async {
+    try {
+      final queries = _buildQueries(params);
+      final httpResponse = await _api.getPriceHistories(
+        params.source,
+        queries,
+      );
+      final response = ChartPricesResponse.fromJson(httpResponse.data);
+
+      if (!response.success) {
+        throw Exception('Data unavailable');
+      }
+
+      return response.data.parseEach(
+        GoldPriceDto.fromJson,
+        label: 'ChartRemoteDatasource',
+      );
+    } on DioException catch (e) {
+      throw Exception(e.message ?? 'Failed to fetch price history');
+    }
+  }
+
+  Map<String, dynamic> _buildQueries(PriceHistoryParams params) {
+    return {
+      'length': params.length,
+      if (params.weight != null) 'weight': params.weight,
+      if (params.material != null) 'material': params.material,
+      if (params.materialType != null) 'materialType': params.materialType,
+    };
   }
 }
