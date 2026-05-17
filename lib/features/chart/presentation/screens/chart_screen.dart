@@ -128,36 +128,38 @@ class ChartScreen extends ConsumerWidget {
                   ),
                 ),
                 data: (prices) {
-                    final sortedPrices = [...prices]..sort((a, b) {
-                        final nameCompare =
-                            a.materialType.compareTo(b.materialType);
-                        if (nameCompare != 0) return nameCompare;
-                        return a.weight.compareTo(b.weight);
-                      });
+                  final sortedPrices = [...prices]
+                    ..sort((a, b) {
+                      final nameCompare = a.materialType.compareTo(
+                        b.materialType,
+                      );
+                      if (nameCompare != 0) return nameCompare;
+                      return a.weight.compareTo(b.weight);
+                    });
 
-                    return SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Gap(10),
-                            for (final price in sortedPrices)
-                              _PriceListTile(
-                                price: price,
-                                currencyFormat: currencyFormat,
-                                isSelected: selectedChartPrice == price,
-                                onTap: () => ref
-                                    .read(selectedChartPriceProvider.notifier)
-                                    .select(price),
-                              ),
-                            Gap(10),
-                            isPortrait ? Gap(70) : const SizedBox.shrink(),
-                          ],
-                        ),
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Gap(10),
+                          for (final price in sortedPrices)
+                            _PriceListTile(
+                              price: price,
+                              currencyFormat: currencyFormat,
+                              isSelected: selectedChartPrice == price,
+                              onTap: () => ref
+                                  .read(selectedChartPriceProvider.notifier)
+                                  .select(price),
+                            ),
+                          Gap(10),
+                          isPortrait ? Gap(70) : const SizedBox.shrink(),
+                        ],
                       ),
-                    );
-                  },
+                    ),
+                  );
+                },
               );
 
               final priceList = Container(
@@ -379,6 +381,13 @@ void _showSourceSheet(BuildContext context, WidgetRef ref) {
   }
 }
 
+const Map<String, Color> rawMaterialColors = {
+  'gold': AppColors.accent,
+  'silver': AppColors.secondary,
+  'diamond': AppColors.primary,
+  'jewelry': AppColors.primary,
+};
+
 class _PriceListTile extends StatelessWidget {
   final GoldPrice price;
   final NumberFormat currencyFormat;
@@ -410,7 +419,8 @@ class _PriceListTile extends StatelessWidget {
                 aspectRatio: 2 / 1.7,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.accent,
+                    color:
+                        rawMaterialColors[price.material] ?? AppColors.accent,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Padding(
