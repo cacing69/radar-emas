@@ -36,29 +36,27 @@ class ChartScreen extends ConsumerWidget {
       backgroundColor: Colors.grey.shade100,
       appBar: isPortrait
           ? PreferredSize(
-              preferredSize: Size.fromHeight(100),
-              child: SafeArea(
-                child: GestureDetector(
-                  onTap: () => _showSourceSheet(context, ref),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: RadarEmasAppBar(
-                      child: Skeletonizer(
-                        enabled: sourcesAsync.isLoading,
-                        child: Row(
-                          children: [
-                            Gap(5),
-                            Icon(
-                              LucideIcons.arrowLeftRight,
-                              size: 20,
-                              color: AppColors.primary,
-                            ),
-                            Gap(10),
-                            Text(
-                              selectedSource?.displayName ?? 'Select Provider',
-                            ),
-                          ],
-                        ),
+              preferredSize: Size.fromHeight(60),
+              child: GestureDetector(
+                onTap: () => _showSourceSheet(context, ref),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: RadarEmasAppBar(
+                    child: Skeletonizer(
+                      enabled: sourcesAsync.isLoading,
+                      child: Row(
+                        children: [
+                          Gap(5),
+                          Icon(
+                            LucideIcons.arrowLeftRight,
+                            size: 20,
+                            color: AppColors.primary,
+                          ),
+                          Gap(10),
+                          Text(
+                            selectedSource?.displayName ?? 'Select Provider',
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -194,117 +192,148 @@ class ChartScreen extends ConsumerWidget {
 void _showSourceSheet(BuildContext context, WidgetRef ref) {
   final sources = ref.read(sourcesProvider).asData?.value ?? [];
   final selected = ref.read(selectedSourceProvider);
+  final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (ctx) {
-      var query = '';
-      var displayQuery = '';
-      Timer? debounce;
+  var query = '';
+  var displayQuery = '';
+  Timer? debounce;
 
-      return StatefulBuilder(
-        builder: (ctx, setState) {
-          final filtered = sources.where((s) {
-            return s.displayName.toLowerCase().contains(query.toLowerCase());
-          }).toList();
+  final sheetContent = StatefulBuilder(
+    builder: (ctx, setState) {
+      final filtered = sources.where((s) {
+        return s.displayName.toLowerCase().contains(query.toLowerCase());
+      }).toList();
 
-          return SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-                  child: Text(
-                    'Select Provider',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                    ),
-                    onChanged: (v) {
-                      displayQuery = v;
-                      setState(() {});
-                      debounce?.cancel();
-                      debounce = Timer(const Duration(milliseconds: 300), () {
-                        query = displayQuery;
-                        setState(() {});
-                      });
-                    },
-                  ),
-                ),
-                const Gap(8),
-                Flexible(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, __) =>
-                        const Divider(height: 1, indent: 16, endIndent: 16),
-                    itemBuilder: (_, i) {
-                      final s = filtered[i];
-                      final isSelected = s.name == selected;
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: isSelected
-                              ? AppColors.accent.withValues(alpha: 0.2)
-                              : Colors.grey.shade100,
-                          child: Text(
-                            s.displayName[0],
-                            style: TextStyle(
-                              color: isSelected
-                                  ? AppColors.accent
-                                  : Colors.grey,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          s.displayName,
-                          style: TextStyle(
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: AppColors.accent)
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(selectedSourceProvider.notifier)
-                              .select(s.name);
-                          Navigator.pop(ctx);
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Gap(8),
-              ],
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+              child: Text(
+                'Select Provider',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
             ),
-          );
-        },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                ),
+                onChanged: (v) {
+                  displayQuery = v;
+                  setState(() {});
+                  debounce?.cancel();
+                  debounce = Timer(const Duration(milliseconds: 300), () {
+                    query = displayQuery;
+                    setState(() {});
+                  });
+                },
+              ),
+            ),
+            const Gap(8),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: filtered.length,
+                separatorBuilder: (_, __) =>
+                    const Divider(height: 1, indent: 16, endIndent: 16),
+                itemBuilder: (_, i) {
+                  final s = filtered[i];
+                  final isSelected = s.name == selected;
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: isSelected
+                          ? AppColors.accent.withValues(alpha: 0.2)
+                          : Colors.grey.shade100,
+                      child: Text(
+                        s.displayName[0],
+                        style: TextStyle(
+                          color: isSelected ? AppColors.accent : Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      s.displayName,
+                      style: TextStyle(
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? const Icon(Icons.check, color: AppColors.accent)
+                        : null,
+                    onTap: () {
+                      ref.read(selectedSourceProvider.notifier).select(s.name);
+                      Navigator.pop(ctx);
+                    },
+                  );
+                },
+              ),
+            ),
+            Gap(8),
+          ],
+        ),
       );
     },
   );
+
+  if (isPortrait) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => sheetContent,
+    );
+  } else {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.black54,
+      pageBuilder: (context, anim1, anim2) => Align(
+        alignment: Alignment.centerLeft,
+        child: Material(
+          color: Colors.white,
+          borderRadius: const BorderRadius.horizontal(
+            right: Radius.circular(16),
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: Column(children: [Expanded(child: sheetContent)]),
+          ),
+        ),
+      ),
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
+    );
+  }
 }
 
 class _PriceListTile extends StatelessWidget {

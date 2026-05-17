@@ -14,10 +14,13 @@ class RadarEmasAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 70, maxHeight: 70),
+      constraints: BoxConstraints(minHeight: 60, maxHeight: 60),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: Row(
           children: [
             Expanded(
@@ -33,168 +36,162 @@ class RadarEmasAppBar extends StatelessWidget {
                 ),
               ),
             ),
-            const Gap(10),
-            GestureDetector(
+
+            if (isPortrait) ...[
+              Row(
+                children: [
+                  const Gap(10),
+                  RadarEmasAvatarMenu(avatarKey: _avatarKey),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RadarEmasAvatarMenu extends StatelessWidget {
+  const RadarEmasAvatarMenu({
+    super.key,
+    required GlobalKey<State<StatefulWidget>> avatarKey,
+  }) : _avatarKey = avatarKey;
+
+  final GlobalKey<State<StatefulWidget>> _avatarKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        final avatarContext = _avatarKey.currentContext;
+        if (avatarContext == null) return;
+        final renderBox = avatarContext.findRenderObject() as RenderBox;
+        final position = renderBox.localToGlobal(Offset.zero);
+        showMenu(
+          context: context,
+          color: Colors.white,
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          position: RelativeRect.fromLTRB(
+            position.dx,
+            position.dy + renderBox.size.height + 8,
+            position.dx + renderBox.size.width,
+            0,
+          ),
+          items: <PopupMenuEntry>[
+            PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              height: 28,
               onTap: () {
-                final avatarContext = _avatarKey.currentContext;
-                if (avatarContext == null) return;
-                final renderBox = avatarContext.findRenderObject() as RenderBox;
-                final position = renderBox.localToGlobal(Offset.zero);
-                showMenu(
-                  context: context,
-                  color: Colors.white,
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
                   ),
-                  position: RelativeRect.fromLTRB(
-                    position.dx,
-                    position.dy + renderBox.size.height + 8,
-                    position.dx + renderBox.size.width,
-                    0,
-                  ),
-                  items: <PopupMenuEntry>[
-                    PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
-                      height: 28,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfileScreen(),
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(
-                            LucideIcons.user,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          Gap(8),
-                          Text('Profile', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
-                      height: 28,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsScreen(),
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(
-                            LucideIcons.settings,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          Gap(8),
-                          Text('Settings', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
-                      height: 28,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AboutScreen(),
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(
-                            LucideIcons.info,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          Gap(8),
-                          Text('About', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
-                      height: 28,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Logout'),
-                            content: const Text(
-                              'Are you sure you want to logout?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'Logout',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(LucideIcons.logOut, size: 14, color: Colors.red),
-                          Gap(8),
-                          Text(
-                            'Logout',
-                            style: TextStyle(fontSize: 12, color: Colors.red),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 );
               },
-              child: Container(
-                key: _avatarKey,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: AppShadows.subtle,
-                ),
-                child: const CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    LucideIcons.user,
-                    size: 24,
+              child: const Row(
+                children: [
+                  Icon(LucideIcons.user, size: 14, color: AppColors.primary),
+                  Gap(8),
+                  Text('Profile', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              height: 28,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(
+                    LucideIcons.settings,
+                    size: 14,
                     color: AppColors.primary,
                   ),
-                ),
+                  Gap(8),
+                  Text('Settings', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              height: 28,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutScreen()),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(LucideIcons.info, size: 14, color: AppColors.primary),
+                  Gap(8),
+                  Text('About', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              height: 28,
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Logout'),
+                    content: const Text('Are you sure you want to logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'Logout',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Row(
+                children: [
+                  Icon(LucideIcons.logOut, size: 14, color: Colors.red),
+                  Gap(8),
+                  Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 12, color: Colors.red),
+                  ),
+                ],
               ),
             ),
           ],
+        );
+      },
+      child: Container(
+        key: _avatarKey,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: AppShadows.subtle,
+        ),
+        child: const CircleAvatar(
+          radius: 22,
+          backgroundColor: Colors.white,
+          child: Icon(LucideIcons.user, size: 28, color: AppColors.primary),
         ),
       ),
     );

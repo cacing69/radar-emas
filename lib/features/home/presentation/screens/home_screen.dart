@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:radar_emas/core/theme/app_colors.dart';
-import 'package:radar_emas/core/widgets/nav_item.dart';
 import 'package:radar_emas/core/widgets/radar_emas_nav_bar.dart';
 import 'package:radar_emas/features/chart/presentation/screens/chart_screen.dart';
 import 'package:radar_emas/features/main/presentation/screens/main_screen.dart';
@@ -45,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Positioned(
                   top: 0,
                   bottom: 0,
-                  left: isPortrait ? 0 : 60,
+                  left: isPortrait ? 0 : 55,
                   right: 0,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
@@ -53,8 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     switchOutCurve: Curves.easeInOut,
                     layoutBuilder: (currentChild, previousChildren) {
                       return Stack(
-                        alignment: Alignment.topCenter,
-                        children: [...previousChildren, ?currentChild],
+                        alignment: Alignment.topLeft,
+                        children: [
+                          ...previousChildren,
+                          if (currentChild != null) currentChild,
+                        ],
                       );
                     },
                     child: KeyedSubtree(
@@ -63,24 +63,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                if (!isPortrait)
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: RadarEmasNavBar(
-                      selectedIndex: selected,
-                      onChanged: (index) => selectedMenu.value = index,
-                    ),
-                  ),
                 if (isPortrait)
                   Positioned(
-                    bottom: 5,
+                    bottom: 0,
                     left: 0,
                     right: 0,
                     child: RadarEmasNavBar(
                       selectedIndex: selected,
                       onChanged: (index) => selectedMenu.value = index,
+                    ),
+                  )
+                else
+                  Positioned(
+                    left: 0,
+                    top: 5,
+                    bottom: 0,
+                    child: Column(
+                      children: [
+                        RadarEmasNavBar(
+                          selectedIndex: selected,
+                          onChanged: (index) => selectedMenu.value = index,
+                        ),
+                      ],
                     ),
                   ),
               ],

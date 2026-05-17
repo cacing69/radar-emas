@@ -193,7 +193,7 @@ class _ChartCardState extends State<ChartCard> {
                     ),
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
-                        getTooltipItems: (_) => [],
+                        getTooltipItems: (spots) => spots.map((_) => null).toList(),
                       ),
                       touchCallback: (event, response) {
                         final spots = response?.lineBarSpots;
