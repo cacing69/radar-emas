@@ -18,32 +18,31 @@ class RadarEmasAppBar extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 60, maxHeight: 60),
+      constraints: BoxConstraints(
+        minHeight: isPortrait ? 60 : 44,
+        maxHeight: isPortrait ? 60 : 44,
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: EdgeInsets.symmetric(vertical: isPortrait ? 6 : 0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.all(8),
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: AppShadows.subtle,
                 ),
-                child: SizedBox.expand(
-                  child: Align(alignment: Alignment.centerLeft, child: child),
-                ),
+                child: Align(alignment: Alignment.centerLeft, child: child),
               ),
             ),
 
             if (isPortrait) ...[
-              Row(
-                children: [
-                  const Gap(10),
-                  RadarEmasAvatarMenu(avatarKey: _avatarKey),
-                ],
-              ),
+              const Gap(10),
+              RadarEmasAvatarMenu(avatarKey: _avatarKey),
             ],
           ],
         ),

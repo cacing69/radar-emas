@@ -52,7 +52,7 @@ class RadarEmasNavBar extends StatelessWidget {
                           child: RadarEmasAvatarMenu(avatarKey: GlobalKey()),
                         ),
                       ),
-                      Gap(10),
+                      Gap(7),
                     ],
                   ),
             Padding(

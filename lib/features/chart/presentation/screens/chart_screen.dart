@@ -173,6 +173,7 @@ class ChartScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
+                        Gap(7),
                         Expanded(child: priceList),
                       ],
                     ),
