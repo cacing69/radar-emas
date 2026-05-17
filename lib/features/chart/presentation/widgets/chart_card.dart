@@ -24,6 +24,7 @@ class ChartCard extends ConsumerStatefulWidget {
 class _ChartCardState extends ConsumerState<ChartCard> {
   double? _touchedBeli;
   double? _touchedJual;
+  String? _touchedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +41,17 @@ class _ChartCardState extends ConsumerState<ChartCard> {
       if (prev != next) {
         _touchedBeli = null;
         _touchedJual = null;
+        _touchedDate = null;
       }
     });
 
     final prices = historyAsync?.asData?.value ?? [];
     final buyback = _touchedBeli ?? selectedPrice?.buybackPrice ?? 0;
     final sell = _touchedJual ?? selectedPrice?.sellPrice ?? 0;
-    final dateText = !isLoading && prices.isNotEmpty
-        ? _formatDate(_groupByDate(prices).keys.last)
-        : '';
+    final dateText = _touchedDate ??
+        (!isLoading && prices.isNotEmpty
+            ? _formatDate(_groupByDate(prices).keys.last)
+            : '');
 
     return Container(
       decoration: BoxDecoration(
@@ -93,9 +96,13 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                     ),
                   ),
                   Gap(10),
-                  Text(
-                    'Radar Emas',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  Expanded(
+                    child: Text(
+                      selectedPrice?.materialType ?? 'Radar Emas',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Spacer(),
                   Text(
@@ -303,6 +310,10 @@ class _ChartCardState extends ConsumerState<ChartCard> {
                 setState(() {
                   _touchedBeli = buyback.y;
                   _touchedJual = jual.y;
+                  final dateIndex = buyback.x.toInt();
+                  if (dateIndex >= 0 && dateIndex < dates.length) {
+                    _touchedDate = _formatDate(dates[dateIndex]);
+                  }
                 });
               }
             },
@@ -369,7 +380,7 @@ class _ChartCardState extends ConsumerState<ChartCard> {
   String _formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      return DateFormat('d MMMM yyyy', 'id_ID').format(date);
+      return DateFormat('d MMM yyyy', 'en_US').format(date);
     } catch (_) {
       return dateStr;
     }
