@@ -1,6 +1,10 @@
 # Radar Emas
 
-A Flutter app to track gold prices in Indonesia.
+A Mobile app to track gold prices in Indonesia.
+
+## GitAds Sponsored
+
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=cacing69/radar-emas@github)](https://gitads.dev/v1/ad-track?source=cacing69/radar-emas@github)
 
 ## Data Source
 
