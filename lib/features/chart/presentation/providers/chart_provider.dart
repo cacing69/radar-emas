@@ -20,7 +20,10 @@ class SelectedSource extends _$SelectedSource {
 @riverpod
 class SelectedChartPrice extends _$SelectedChartPrice {
   @override
-  GoldPrice? build() => null;
+  GoldPrice? build() {
+    ref.keepAlive();
+    return null;
+  }
 
   void select(GoldPrice price) => state = price;
   void clear() => state = null;
@@ -51,6 +54,7 @@ Future<List<GoldPrice>> chartPrices(Ref ref, String source) async {
 
 @riverpod
 Future<List<GoldPrice>> priceHistory(Ref ref, GoldPrice price) async {
+  ref.keepAlive();
   final repository = ref.watch(chartRepositoryProvider);
   final usecase = GetPriceHistories(repository);
   final params = PriceHistoryParams(
